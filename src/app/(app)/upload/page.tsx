@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { UploadCloud, LocateFixed, Calendar, Leaf } from "lucide-react"
+import { useEffect, useState } from "react"
 
 const formSchema = z.object({
   herbName: z.string().min(2, "Herb name is required."),
@@ -28,16 +29,38 @@ const formSchema = z.object({
 
 export default function UploadPage() {
   const { toast } = useToast()
+  const [isClient, setIsClient] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       herbName: "Ashwagandha",
-      batchId: `HB-ASH-${new Date().getFullYear()}${(new Date().getMonth() + 1).toString().padStart(2, '0')}-`,
+      batchId: "",
       location: "24.47° N, 74.88° E (Neemuch, MP)",
       harvestTime: new Date().toISOString().slice(0, 16),
     },
   })
+
+  const herbName = form.watch("herbName")
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  useEffect(() => {
+    if (isClient) {
+      const generateBatchId = () => {
+        const herbCode = herbName.substring(0, 3).toUpperCase()
+        const date = new Date()
+        const year = date.getFullYear().toString().slice(-2)
+        const month = (date.getMonth() + 1).toString().padStart(2, '0')
+        const day = date.getDate().toString().padStart(2, '0')
+        const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0')
+        return `HB-${herbCode}-${year}${month}${day}-${random}`
+      }
+      form.setValue("batchId", generateBatchId())
+    }
+  }, [herbName, form, isClient])
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
@@ -83,9 +106,9 @@ export default function UploadPage() {
                   <FormItem>
                     <FormLabel>Batch ID</FormLabel>
                     <FormControl>
-                      <Input placeholder="Generated or manual batch ID" {...field} />
+                      <Input placeholder="Generated or manual batch ID" {...field} readOnly />
                     </FormControl>
-                    <FormDescription>This ID will be used to track the batch.</FormDescription>
+                    <FormDescription>This ID is automatically generated.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
