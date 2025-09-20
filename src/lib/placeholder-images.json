@@ -1,3 +1,22 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "ashwagandha-1",
+      "description": "A close-up of Ashwagandha roots on a wooden table.",
+      "imageUrl": "https://picsum.photos/seed/herb1/1200/800",
+      "imageHint": "ashwagandha root"
+    },
+    {
+      "id": "farmer-1",
+      "description": "A farmer holding freshly harvested herbs in a field.",
+      "imageUrl": "https://picsum.photos/seed/farmer1/600/400",
+      "imageHint": "farmer herbs"
+    },
+    {
+      "id": "lab-1",
+      "description": "A laboratory setting with scientific equipment for testing herbs.",
+      "imageUrl": "https://picsum.photos/seed/lab1/600/400",
+      "imageHint": "laboratory science"
+    }
+  ]
 }

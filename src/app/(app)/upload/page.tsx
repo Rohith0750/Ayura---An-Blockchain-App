@@ -1,0 +1,150 @@
+'use client'
+
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { Button } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useToast } from "@/hooks/use-toast"
+import { UploadCloud, LocateFixed, Calendar, Leaf } from "lucide-react"
+
+const formSchema = z.object({
+  herbName: z.string().min(2, "Herb name is required."),
+  batchId: z.string().min(5, "Batch ID is required."),
+  location: z.string().min(1, "Location is required."),
+  harvestTime: z.string().min(1, "Harvest time is required."),
+  photo: z.any().optional(),
+})
+
+export default function UploadPage() {
+  const { toast } = useToast()
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      herbName: "Ashwagandha",
+      batchId: `HB-ASH-${new Date().getFullYear()}${(new Date().getMonth() + 1).toString().padStart(2, '0')}-`,
+      location: "24.47° N, 74.88° E (Neemuch, MP)",
+      harvestTime: new Date().toISOString().slice(0, 16),
+    },
+  })
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values)
+    toast({
+      title: "Harvest Data Submitted",
+      description: "Your harvest data has been successfully recorded on the blockchain (simulation).",
+    })
+    form.reset()
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Upload Harvest Data</CardTitle>
+        <CardDescription>
+          Fill in the details below to register a new harvest batch on the blockchain.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="grid md:grid-cols-2 gap-8">
+              <FormField
+                control={form.control}
+                name="herbName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Herb Name</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Leaf className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input placeholder="e.g., Ashwagandha" {...field} className="pl-10" />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="batchId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Batch ID</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Generated or manual batch ID" {...field} />
+                    </FormControl>
+                    <FormDescription>This ID will be used to track the batch.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="location"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Geo-tagged Location</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <LocateFixed className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input placeholder="Fetching GPS..." {...field} className="pl-10" />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="harvestTime"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Harvest Date and Time</FormLabel>
+                    <FormControl>
+                       <div className="relative">
+                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input type="datetime-local" {...field} className="pl-10" />
+                       </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={form.control}
+                name="photo"
+                render={({ field }) => (
+                  <FormItem className="md:col-span-2">
+                    <FormLabel>Harvest Photo</FormLabel>
+                    <FormControl>
+                       <Input type="file" accept="image/*" />
+                    </FormControl>
+                     <FormDescription>Upload a clear photo of the harvested batch.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            
+            <Button type="submit">
+              <UploadCloud />
+              Submit to Ledger
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
+  )
+}
