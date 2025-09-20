@@ -1,15 +1,18 @@
+
 'use client'
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useAuth } from "@/hooks/use-auth"
 import { Search } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 export default function DashboardPage() {
   const router = useRouter()
+  const { user } = useAuth()
   const [batchId, setBatchId] = useState('HB-ASH-2407-001')
 
   const handleVerify = (e: React.FormEvent) => {
@@ -22,7 +25,7 @@ export default function DashboardPage() {
   return (
     <div className="grid gap-6">
       <div className="space-y-2">
-        <h1 className="font-headline text-3xl md:text-4xl">Welcome to Ayura 🌱</h1>
+        <h1 className="font-headline text-3xl md:text-4xl">Welcome to Ayura 🌱, {user?.email || 'Guest'}!</h1>
         <p className="text-muted-foreground">
           Ensuring transparency and trust in the Ayurvedic supply chain, from farm to pharmacy.
         </p>
