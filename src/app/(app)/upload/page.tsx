@@ -36,7 +36,7 @@ export default function UploadPage() {
     defaultValues: {
       herbName: "Ashwagandha",
       batchId: "",
-      location: "24.47° N, 74.88° E (Neemuch, MP)",
+      location: "Fetching GPS...",
       harvestTime: new Date().toISOString().slice(0, 16),
     },
   })
@@ -46,6 +46,26 @@ export default function UploadPage() {
   useEffect(() => {
     setIsClient(true)
   }, [])
+  
+  useEffect(() => {
+    if(isClient && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords
+          form.setValue("location", `${latitude.toFixed(4)}° N, ${longitude.toFixed(4)}° E`)
+        },
+        (error) => {
+          console.error("Error getting location: ", error)
+          form.setValue("location", "Could not fetch location")
+          toast({
+            variant: "destructive",
+            title: "Location Error",
+            description: "Could not fetch your location. Please ensure you have granted location permissions.",
+          })
+        }
+      )
+    }
+  }, [isClient, form, toast])
 
   useEffect(() => {
     if (isClient) {
