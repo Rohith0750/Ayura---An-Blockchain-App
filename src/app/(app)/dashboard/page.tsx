@@ -22,7 +22,7 @@ export default function DashboardPage() {
   return (
     <div className="grid gap-6">
       <div className="space-y-2">
-        <h1 className="font-headline text-3xl md:text-4xl">Welcome to HerbiChain</h1>
+        <h1 className="font-headline text-3xl md:text-4xl">Welcome to Ayura 🌱</h1>
         <p className="text-muted-foreground">
           Ensuring transparency and trust in the Ayurvedic supply chain, from farm to pharmacy.
         </p>
